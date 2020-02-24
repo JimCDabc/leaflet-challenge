@@ -78,6 +78,11 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_week.geoj
     quakeFeatures.forEach(function(quake) {
         var latlng = L.latLng(quake.geometry.coordinates[1], quake.geometry.coordinates[0]);
         var props = quake.properties;
+
+        // convert USGS time (milleseconds since 1970 to a string)
+        var date = new Date(props.time);
+        datestr = date.toString();
+
         var quakeMarker =
             L.circle(latlng, {
             color: getColor(props.mag),
@@ -86,7 +91,7 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_week.geoj
             // radius:  10000 * (2 ** props.mag),
             radius:  50000 * props.mag
             }).bindPopup(props.place + "<br>Magnitude: " +
-            + props.mag + "<br>Time: " + props.time);
+            + props.mag + "<br>Time: " + datestr);
 
         // console.log(layers.QUAKES);
         layers.QUAKES.addLayer(quakeMarker);
