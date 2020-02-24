@@ -29,7 +29,7 @@ var map = L.map("map", {
 // Create an overlays object to add to the layer control
 var overlays = {
   "Earthquakes": layers.QUAKES,
-  "Tectonic Plates": layers.PLATES
+//   "Tectonic Plates": layers.PLATES
 };
 
 // Create a control for our layers, add our overlay layers to it
@@ -50,6 +50,7 @@ function getColor(d) {
 
 }
 
+var grades = [0,1,2,3,4,5,6,7,8]
 // Create a legend to display information about our map
 var info = L.control({
     position: "bottomright"
@@ -58,6 +59,11 @@ var info = L.control({
 // When the layer control is added, insert a div with the class of "legend"
 info.onAdd = function() {
     var div = L.DomUtil.create("div", "legend");
+    for (var i = 0; i < grades.length; i++) {
+        div.innerHTML += '<i style="background:' + getColor(grades[i] + 1) + '"></i> '
+         + grades[i] 
+         + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+        }
     return div;
 };
 
@@ -74,10 +80,11 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_week.geoj
         var props = quake.properties;
         var quakeMarker =
             L.circle(latlng, {
+            color: getColor(props.mag),
             stroke: false,
             fillOpacity: 0.8,
-            color: getColor(props.mag),
-            radius:  10000 * (1.8 ** props.mag)
+            // radius:  10000 * (2 ** props.mag),
+            radius:  50000 * props.mag
             }).bindPopup(props.place + "<br>Magnitude: " +
             + props.mag + "<br>Time: " + props.time);
 
